@@ -14,19 +14,40 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Java
+# Java / Maven / Gradle
 *.class
 *.jar
 *.war
 *.nar
 target/
+!**/src/main/**/target/
+!**/src/test/**/target/
 .gradle/
 build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+.mvn/wrapper/maven-wrapper.jar
 
-# IDE & OS
+# IDE & Editores
 .idea/
+*.iws
+*.iml
+*.ipr
 .vscode/
 *.swp
 *.swo
+.classpath
+.project
+.settings/
+.factorypath
+.apt_generated/
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Archivos de Sistema Operativo
 .DS_Store
 Thumbs.db
+HELP.md
