@@ -23,7 +23,7 @@ public class Aplicacion {
 
         while (opcion != 0) {
             mostrarMenu();
-            opcion = Integer.parseInt(teclado.nextLine().trim());
+            opcion = leerEntero();
 
             if (opcion == 1) {
                 registrarGasto();
@@ -62,12 +62,16 @@ public class Aplicacion {
 
     // ---- 1. Registrar gasto ----
     public static void registrarGasto() {
-        System.out.print("Concepto: ");
-        String concepto = teclado.nextLine();
-        System.out.print("Monto: ");
-        double monto = Double.parseDouble(teclado.nextLine());
-        System.out.print("Categoria: ");
-        String categoria = teclado.nextLine();
+        // Validacion: no superar la capacidad de los arreglos
+        if (cantidadGastos >= conceptos.length) {
+            System.out.println("No hay espacio: se alcanzo el maximo de "
+                    + conceptos.length + " gastos.");
+            return;
+        }
+
+        String concepto = leerTextoNoVacio("Concepto: ");
+        double monto = leerMontoNoNegativo("Monto: ");
+        String categoria = leerTextoNoVacio("Categoria: ");
 
         conceptos[cantidadGastos] = concepto;
         montos[cantidadGastos] = monto;
@@ -132,8 +136,7 @@ public class Aplicacion {
 
     // ---- 5. Filtrar por monto ----
     public static void filtrarPorMonto() {
-        System.out.print("Mostrar gastos superiores a: ");
-        double limite = Double.parseDouble(teclado.nextLine());
+        double limite = leerMontoNoNegativo("Mostrar gastos superiores a: ");
         int encontrados = 0;
 
         for (int i = 0; i < cantidadGastos; i++) {
@@ -149,8 +152,7 @@ public class Aplicacion {
 
     // ---- 6. Buscar por concepto ----
     public static void buscarPorConcepto() {
-        System.out.print("Texto a buscar: ");
-        String texto = teclado.nextLine();
+        String texto = leerTextoNoVacio("Texto a buscar: ");
         int encontrados = 0;
 
         for (int i = 0; i < cantidadGastos; i++) {
@@ -162,6 +164,59 @@ public class Aplicacion {
         if (encontrados == 0) {
             System.out.println("No se encontraron gastos con ese concepto.");
         }
+    }
+
+    // ---- Metodos de lectura con validacion (repiten hasta recibir un dato valido) ----
+
+    // Lee un texto; no acepta vacio ni solo espacios
+    public static String leerTextoNoVacio(String mensaje) {
+        String texto = "";
+        while (texto.length() == 0) {
+            System.out.print(mensaje);
+            texto = teclado.nextLine().trim();
+            if (texto.length() == 0) {
+                System.out.println("El texto no puede estar vacio.");
+            }
+        }
+        return texto;
+    }
+
+    // Lee un monto; no acepta letras ni valores negativos (admite coma o punto decimal)
+    public static double leerMontoNoNegativo(String mensaje) {
+        double monto = -1;
+        boolean valido = false;
+        while (!valido) {
+            System.out.print(mensaje);
+            String linea = teclado.nextLine().trim().replace(',', '.');
+            try {
+                monto = Double.parseDouble(linea);
+                if (Double.isNaN(monto) || Double.isInfinite(monto)) {
+                    System.out.println("Ingrese un numero valido.");
+                } else if (monto < 0) {
+                    System.out.println("El monto no puede ser negativo.");
+                } else {
+                    valido = true;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Ingrese un numero valido.");
+            }
+        }
+        return monto;
+    }
+
+    // Lee un numero entero (para la opcion del menu)
+    public static int leerEntero() {
+        int numero = -1;
+        boolean valido = false;
+        while (!valido) {
+            try {
+                numero = Integer.parseInt(teclado.nextLine().trim());
+                valido = true;
+            } catch (NumberFormatException e) {
+                System.out.print("Ingrese un numero entero: ");
+            }
+        }
+        return numero;
     }
 
     // Coincidencia parcial sin distinguir mayusculas y minusculas
